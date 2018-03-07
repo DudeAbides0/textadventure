@@ -3,11 +3,11 @@ from room import Room
 lobby = Room ('You have reached Coronado Hotel, Welcome', 'You are in the lobby', 'l')
 frontdesk = Room('Front Desk', 'You reached the front desk, there is no one here ', 'f')
 patio = Room('Patio', 'You are in the patio, smoking is allowed.', 'p')
-elevator = Room('Elevator', 'You attempt to take the elevator but there is a sign that reads: Under Maintainance', 'e')
+elevator = Room('Elevator', 'You attempt to take the elevator but you need an elevator pass', 'e')
 openbar = Room('Open Bar', 'You reached the open bar, there is a man lying on the floor', 'o')
 cafe = Room('Cafe', 'You are in the Cafe, there is a cash register to your right', 'c')
 parkinglot = Room('Parking Lot', 'You are in the parking lot, there is a car in the distance', 'pl')
-entrance = Room('Entrance', 'You reached the entrance of the hotel, you try to open it but its locked')
+entrance = Room('Entrance', 'You reached the entrance of the hotel, you try to open it but its locked','ent')
 
 
 
