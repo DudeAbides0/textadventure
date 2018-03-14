@@ -1,3 +1,6 @@
+import self as self
+
+
 class Inventory():
     def __init__(self):
         self.items = []
@@ -76,7 +79,7 @@ class Room():
             self.rooms[direction] = room
         self.connectors.append((connector, actions[0]))
 
-    def enter_room(self, inventory):
+    def enter_room(self, Inventory):
         print (self.name)
         print
         print (self.description)
@@ -98,14 +101,14 @@ class Room():
     def next_room(self, direction):
         return self.rooms[direction]
 
-    def process_command(self, command, inventory):
+    def process_command(self, command, Inventory):
         if command in self.rooms.keys():
             new_room = self.next_room(command)
             return new_room
         elif "get" in command:
             for item in self.items:
                 if item.name in command:
-                    inventory.add(item)
+                    Inventory.add(item)
                     self.items.remove(item)
                     return "You picked up the " + item.name + "."
                 else:
@@ -120,7 +123,6 @@ class LightSource(Item):
         Item.__init__(self, name)
         self.known_commands["turn on"] = self.turn_on
         self.known_commands["turn off"] = self.turn_off
-
 
     @staticmethod
     def is_one_on(sources):
@@ -154,24 +156,18 @@ class Flashlight(LightSource):
         # Compute the time it's been on and then drain the battery an equal amount
         pass
 
-class ElevatorRoom(Room):
 
 
+    class DarkRoom(Room):
+        def enter_room(self, Inventory):
+            light_sources = Inventory.get(LightSource)
+            if LightSource.is_one_on(light_sources):
+                Room.enter_room(self, Inventory)
+            else:
+                print ("A ghost came up from behind and possessed you.")
+                print ("Game over.")
+                exit()
 
-
-
-
-class DarkRoom(Room):
-    def enter_room(self, inventory):
-        light_sources = inventory.get(LightSource)
-        if LightSource.is_one_on(light_sources):
-            Room.enter_room(self, inventory)
-        else:
-            print ("A ghost came up from behind and possessed you.")
-            print ("Game over.")
-            exit()
-
-from room import Room
 
 lobby = Room ('You have reached Coronado Hotel, Welcome', 'You are in the lobby', 'l')
 frontdesk = Room('Front Desk', 'You reached the front desk, there is no one here ', 'f')
@@ -221,23 +217,22 @@ entrance.add_connection(parkinglot, "passage", ["north", "n"])
 
 # hallway.add_room('East', living)
 
-
-# inventory = Inventory()
+inventory = Inventory()
 current_room = lobby
-current_room.enter_room()
+current_room.enter_room(inventory)
 frontdesk.add_item(Flashlight())
 
 
 
 while True:
-    command = raw_input("What direction do you want to go?")
+    command = raw_input("What do you want to do?")
     if command in ["exit","x", "quit", "q"]:
         break
 
-    result = current_room.process_command(command,None)
+    result = current_room.process_command(command, inventory)
     if isinstance(result, Room):
         current_room = result
-        result.enter_room()
+        result.enter_room(inventory)
         continue
     elif isinstance(result, str):
         print result
@@ -247,11 +242,3 @@ while True:
         print "I don't know what you mean"
 
 
-    direction = raw_input("What direction do you want to go")
-    if direction == 'x':
-        break
-    elif current_room.is_valid_direction(direction):
-         current_room = current_room.next_room(direction)
-         current_room.enter_room()
-    else:
-        print "Ouch! You ran into a wall."
