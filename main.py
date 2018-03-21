@@ -177,7 +177,7 @@ openbar = Room('Open Bar', 'You reached the open bar, there is a man lying on th
 cafe = Room('Cafe', 'You are in the Cafe, there is a cash register to your right', 'c')
 parkinglot = Room('Parking Lot', 'You are in the parking lot, there is a car in the distance', 'pl')
 entrance = Room('Entrance', 'You reached the entrance of the hotel, you try to open it but its locked','ent')
-
+cellar = Room('Cellar', 'You are in the hidden cellar, excersize caution.', 'cell')
 
 
 
