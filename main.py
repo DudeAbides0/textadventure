@@ -85,7 +85,7 @@ class Room():
         print (self.description)
         print
         for connector in self.connectors:
-            print ("There is a " + connector[0] + \
+            print ("There is a " + connector[0] +
                    " that goes " + connector[1] + ".")
         print
         for item in self.items:
@@ -101,18 +101,20 @@ class Room():
     def next_room(self, direction):
         return self.rooms[direction]
 
-    def process_command(self, command, Inventory):
+    def process_command(self, command, inventory):
         if command in self.rooms.keys():
             new_room = self.next_room(command)
             return new_room
         elif "get" in command:
             for item in self.items:
                 if item.name in command:
-                    Inventory.add(item)
+                    inventory.add(item)
                     self.items.remove(item)
                     return "You picked up the " + item.name + "."
                 else:
                     return "I don't know what you want to pick up."
+
+
         else:
             return None
 
@@ -157,10 +159,9 @@ class Flashlight(LightSource):
         pass
 
 
-
-    class DarkRoom(Room):
-        def enter_room(self, Inventory):
-            light_sources = Inventory.get(LightSource)
+class DarkRoom(Room):
+    def enter_room(self, inventory):
+            light_sources = inventory.get(LightSource)
             if LightSource.is_one_on(light_sources):
                 Room.enter_room(self, Inventory)
             else:
@@ -177,10 +178,7 @@ openbar = Room('Open Bar', 'You reached the open bar, there is a man lying on th
 cafe = Room('Cafe', 'You are in the Cafe, there is a cash register to your right', 'c')
 parkinglot = Room('Parking Lot', 'You are in the parking lot, there is a car in the distance', 'pl')
 entrance = Room('Entrance', 'You reached the entrance of the hotel, you try to open it but its locked','ent')
-cellar = Room('Cellar', 'You are in the hidden cellar, excersize caution.', 'cell')
-
-
-
+cellar = DarkRoom('Cellar', 'You are in the hidden cellar, the only lightsource is your flashlight, exercise caution.', 'cell')
 
 
 frontdesk.add_connection(lobby, "passage", ["south", "s"])
@@ -204,6 +202,8 @@ parkinglot.add_connection(cafe, "passage", ["west", "w"])
 parkinglot.add_connection(entrance, "passage", ["south", "s"])
 entrance.add_connection(parkinglot, "passage", ["north", "n"])
 
+cellar.add_connection(frontdesk, "passage", ["south", "s"])
+frontdesk.add_connection(cellar, "passage", ["north", "n"])
 
 
 
@@ -238,7 +238,10 @@ while True:
         print result
         continue
 
+
     else:
-        print "I don't know what you mean"
+        result = inventory.process_command(command)
+        if len(result) == 0:
+            print "I don't know what you mean"
 
 
